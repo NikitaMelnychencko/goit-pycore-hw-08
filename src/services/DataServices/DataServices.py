@@ -1,9 +1,9 @@
-import json
 from pathlib import Path
+import pickle
 
 class DataServices:
     def __init__(self):
-        self.name = "contacts.json"
+        self.name = "contacts.pkl"
         self.path = Path("./data/" + self.name)
         self.path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -11,11 +11,11 @@ class DataServices:
         if not self.path.exists():
             return {}
         try:
-            with open(self.path, "r") as file:
-                return json.load(file)
-        except json.JSONDecodeError:
+            with open(self.path, "rb") as file:
+                return pickle.load(file)
+        except (pickle.UnpicklingError, EOFError, FileNotFoundError):
             return {}
 
     def save_data(self, data):
-        with open(self.path, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=2, ensure_ascii=False)
+        with open(self.path, "wb") as file:
+            pickle.dump(data, file)
